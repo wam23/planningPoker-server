@@ -37,8 +37,6 @@ app.listen(port, () => {
  // in memory persistence
  const rooms = {};
  function getRoom(room) {
-    if (!rooms.room) {
-       rooms.room = {};
-    }
-    return rooms.room
+    rooms[room] = rooms[room] || {}
+    return rooms[room]
  }
