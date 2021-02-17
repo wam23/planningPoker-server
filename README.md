@@ -2,5 +2,5 @@
 
 ## Local dev server
 ```
-npx nodemon index.js
+npm run watch
 ```

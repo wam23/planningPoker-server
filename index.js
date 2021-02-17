@@ -1,4 +1,5 @@
 const express = require('express')
+const poker = require('./poker')
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -10,33 +11,20 @@ app.get('/', (req, res) => {
 });
 
 app.post('/rooms/:room/vote', (req, res) => {
-   const room = req.params.room;
-   const name = req.body.name;
-   const vote = req.body.vote;
-   //console.log(`${name} voted ${vote} in room ${room}`);
-   getRoom(room)[name] = vote;
+   poker.vote(req.params.room, req.body.name, req.body.vote);
    res.sendStatus(201);
 });
 
 app.get('/rooms/:room/votes', (req, res) => {
-   const room = req.params.room;
-   res.send(getRoom(room));
+   const room = poker.reveal(req.params.room);
+   res.send(room);
 });
 
 app.get('/rooms/:room/reset', (req, res) => {
-   const room = req.params.room;
-   rooms.room = {};
-   console.log(`Reset room ${room}`)
+   poker.reset(req.params.room)
    res.sendStatus(204);
 });
 
 app.listen(port, () => {
    console.log(`Server listening at http://localhost:${port}`)
  })
-
- // in memory persistence
- const rooms = {};
- function getRoom(room) {
-    rooms[room] = rooms[room] || {}
-    return rooms[room]
- }
