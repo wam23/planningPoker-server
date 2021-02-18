@@ -1,7 +1,6 @@
 const express = require('express')
 const poker = require('./poker')
 const app = express()
-const port = process.env.PORT || 3000
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -25,6 +24,4 @@ app.get('/rooms/:room/reset', (req, res) => {
    res.sendStatus(204);
 });
 
-app.listen(port, () => {
-   console.log(`Server listening at http://localhost:${port}`)
- })
+module.exports = app;
