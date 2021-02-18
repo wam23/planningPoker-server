@@ -1,6 +1,7 @@
 const poker = require('./poker');
 
 beforeEach(() => {
+    console.log = jest.fn();
     poker.resetAll();
     poker.vote('a', 'Andy', 5);
     poker.vote('b', 'Bony', 13);
