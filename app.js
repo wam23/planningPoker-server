@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 
 app.post('/rooms/:room/vote', (req, res) => {
    poker.vote(req.params.room, req.body.name, req.body.vote);
-   res.sendStatus(201);
+   res.sendStatus(204);
 });
 
 app.get('/rooms/:room/votes', (req, res) => {

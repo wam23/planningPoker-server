@@ -24,11 +24,11 @@ test("GET / should respond text", async () => {
         .expect("Hello world from A-Team");
 });
 
-test("POST /vote should respond created", async () => {
+test("POST /vote should respond no content", async () => {
     await request(app)
         .post("/rooms/1/vote")
         .send({ name: 'Test2', vote: 5 })
-        .expect(201);
+        .expect(204);
 
     await request(app)
         .get("/rooms/1/votes")
