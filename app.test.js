@@ -4,6 +4,7 @@ const app = require("./app");
 
 beforeEach(() => {
     console.log = jest.fn();
+    console.warn = jest.fn();
 })
 
 beforeEach(async () => {
