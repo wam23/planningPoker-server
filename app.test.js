@@ -22,7 +22,7 @@ test("GET / should respond text", async () => {
     await request(app)
         .get("/")
         .expect(200)
-        .expect("Hello world from A-Team");
+        .expect('Hello world from A-Team');
 });
 
 test("POST /vote should respond no content", async () => {
@@ -33,14 +33,14 @@ test("POST /vote should respond no content", async () => {
 
     await request(app)
         .get("/rooms/1/votes")
-        .expect("{\"Test\":3,\"Test2\":5}");
+        .expect('{"Test":3,"Test2":5}');
 });
 
 test("GET /votes should respond votes", async () => {
     await request(app)
         .get("/rooms/1/votes")
         .expect(200)
-        .expect("{\"Test\":3}");
+        .expect('{"Test":3}');
 });
 
 test("GET /reset should respond no content", async () => {
@@ -50,5 +50,50 @@ test("GET /reset should respond no content", async () => {
 
     await request(app)
         .get("/rooms/1/votes")
-        .expect("{}");
+        .expect('{}');
+});
+
+describe("Long Polling", () => {
+    beforeEach(async () => {
+        await request(app)
+            .get("/poll/1/init")
+            .expect(204);
+    });
+
+    test("POST /vote should update polling", async () => {
+        setTimeout(async () => {
+            await request(app)
+                .post("/rooms/1/vote")
+                .send({ name: 'Test2', vote: 5 })
+                .expect(204);
+        }, 10);
+        await request(app)
+            .get(("/poll/1"))
+            .expect(200)
+            .expect('[{"name":"Test","vote":0},{"name":"Test2","vote":0}]');
+    })
+
+    test("GET /votes should update polling", async () => {
+        setTimeout(async () => {
+            await request(app)
+                .get("/rooms/1/votes")
+                .expect(200);
+        }, 10);
+        await request(app)
+            .get(("/poll/1"))
+            .expect(200)
+            .expect('[{"name":"Test","vote":3}]');
+    })
+
+    test("GET /reset should update polling", async () => {
+        setTimeout(async () => {
+            await request(app)
+                .get("/rooms/1/reset")
+                .expect(204);
+        }, 10);
+        await request(app)
+            .get(("/poll/1"))
+            .expect(200)
+            .expect('[]');
+    })
 });
