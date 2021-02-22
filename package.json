@@ -8,8 +8,9 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-ws": "^4.0.0"
+    "express-longpoll": "0.0.6"
   },
   "devDependencies": {
     "jest": "^26.6.3",

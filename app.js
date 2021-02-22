@@ -1,10 +1,12 @@
 const express = require('express')
 const poker = require('./poker')
 const app = express()
-const expressWs = require('express-ws')(app);
+const cors = require('cors');
+const longpoll = require('express-longpoll')(app);
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(cors())
 
 app.get('/', (req, res) => {
    res.send("Hello world from A-Team");
@@ -28,10 +30,9 @@ app.get('/rooms/:room/reset', (req, res) => {
    res.sendStatus(204);
 });
 
-app.ws('/ws/:room', (ws, req) => {
-   ws.on('message', msg => {
-      console.log(msg);
-   });
+longpoll.create('/poll/:room', (req, res, next) => {
+   req.id = req.params.room;
+   next();
 });
 
 function updateRoom(room, showVote) {
@@ -43,9 +44,7 @@ function updateRoom(room, showVote) {
          vote: showVote ? value : 0
       })
    }
-   expressWs.getWss(`/ws/${room}`).clients.forEach((client) => {
-      client.send(JSON.stringify(result));
-   });
+   longpoll.publishToId('/poll/:room', room, result);
 }
 
 module.exports = app;
