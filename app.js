@@ -5,7 +5,7 @@ const cors = require('cors');
 const longpoll = require('express-longpoll')(app);
 
 app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({extended: true})) // for parsing application/x-www-form-urlencoded
 app.use(cors())
 
 app.get('/', (req, res) => {
@@ -30,9 +30,12 @@ app.get('/rooms/:room/reset', (req, res) => {
    res.sendStatus(204);
 });
 
-longpoll.create('/poll/:room', (req, res, next) => {
-   req.id = req.params.room;
-   next();
+app.get('/poll/:room/init', (req, res) => {
+   const url = `/poll/${req.params.room}`;
+   if (!global.express_longpoll_emitters[url]) {
+      longpoll.create(url);
+   }
+   res.sendStatus(204);
 });
 
 function updateRoom(room, showVote) {
@@ -44,7 +47,7 @@ function updateRoom(room, showVote) {
          vote: showVote ? value : 0
       })
    }
-   longpoll.publishToId('/poll/:room', room, result);
+   longpoll.publish(`/poll/${room}`, result);
 }
 
 module.exports = app;
