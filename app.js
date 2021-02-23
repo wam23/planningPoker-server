@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended: true})) // for parsing application/x-www-f
 app.use(cors())
 
 app.get('/', (req, res) => {
-   res.send("Hello world from A-Team");
+   res.send("OK");
 });
 
 app.post('/rooms/:room/vote', (req, res) => {

@@ -22,7 +22,7 @@ test("GET / should respond text", async () => {
     await request(app)
         .get("/")
         .expect(200)
-        .expect('Hello world from A-Team');
+        .expect('OK');
 });
 
 test("POST /vote should respond no content", async () => {
