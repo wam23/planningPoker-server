@@ -40,3 +40,11 @@ test('reset a room', () => {
     expect(Object.keys(poker.reveal('a')).length).toBe(0);
     expect(Object.keys(poker.reveal('b')).length).toBe(1);
 });
+
+test('validate vote input', () => {
+    expect(() => poker.vote(null, 'b', 1)).toThrow();
+    expect(() => poker.vote('a', null, 1)).toThrow();
+    expect(() => poker.vote('a', 'b', null)).toThrow();
+    expect(() => poker.vote('a', 'b', 'c')).toThrow();
+    expect(() => poker.vote('a', 'b', 101)).toThrow();
+});

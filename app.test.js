@@ -36,6 +36,13 @@ test("POST /vote should respond no content", async () => {
         .expect('{"Test":3,"Test2":5}');
 });
 
+test("POST /vote invalid should respond server error", async () => {
+    await request(app)
+        .post("/rooms/1/vote")
+        .send({ name: null, vote: null })
+        .expect(500);
+});
+
 test("GET /votes should respond votes", async () => {
     await request(app)
         .get("/rooms/1/votes")

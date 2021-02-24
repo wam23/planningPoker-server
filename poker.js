@@ -6,6 +6,16 @@
  }
 
 function vote(room, name, vote) {
+    if (!room) {
+        throw 'Invalid room';
+    }
+    if (!name) {
+        throw 'Invalid name';
+    }
+    vote = parseInt(vote, 10);
+    if (!vote || vote > 100) {
+        throw 'Invalid vote';
+    }
     console.log(`${name} voted ${vote} in room ${room}`);
     getRoom(room)[name] = vote;
 }
