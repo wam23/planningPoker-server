@@ -46,5 +46,7 @@ test('validate vote input', () => {
     expect(() => poker.vote('a', null, 1)).toThrow();
     expect(() => poker.vote('a', 'b', null)).toThrow();
     expect(() => poker.vote('a', 'b', 'c')).toThrow();
-    expect(() => poker.vote('a', 'b', 101)).toThrow();
+    expect(() => poker.vote('a', 'b', -1)).toThrow();
+    expect(() => poker.vote('a', 'b', 4)).toThrow();
+    expect(() => poker.vote('a', 'b', 30)).toThrow();
 });

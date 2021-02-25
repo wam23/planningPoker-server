@@ -4,6 +4,7 @@
     rooms[room] = rooms[room] || {}
     return rooms[room]
  }
+ const fib = [0, 1, 2, 3, 5, 8, 13, 21];
 
 function vote(room, name, vote) {
     if (!room) {
@@ -12,12 +13,15 @@ function vote(room, name, vote) {
     if (!name) {
         throw 'Invalid name';
     }
-    vote = parseInt(vote, 10);
-    if (isNaN(vote) || vote > 100) {
+    if (!isVoteValid(vote)) {
         throw 'Invalid vote';
     }
     console.log(`${name} voted ${vote} in room ${room}`);
     getRoom(room)[name] = vote;
+}
+
+function isVoteValid(vote) {
+    return fib.includes(parseInt(vote, 10));
 }
 
 function reveal(room) {
