@@ -13,7 +13,7 @@ function vote(room, name, vote) {
         throw 'Invalid name';
     }
     vote = parseInt(vote, 10);
-    if (!vote || vote > 100) {
+    if (isNaN(vote) || vote > 100) {
         throw 'Invalid vote';
     }
     console.log(`${name} voted ${vote} in room ${room}`);
