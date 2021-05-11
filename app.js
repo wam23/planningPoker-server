@@ -19,14 +19,18 @@ app.post('/rooms/:room/vote', (req, res) => {
 });
 
 app.get('/rooms/:room/votes', (req, res) => {
+   console.log(' reveal room ' + req.params.room + ' by ' + req.header('x-user'));
+   const revealor = req.header('x-user');
    const room = poker.reveal(req.params.room);
-   updateRoom(req.params.room, true);
+   updateRoom(req.params.room, true, revealor);
    res.send(room);
 });
 
 app.get('/rooms/:room/reset', (req, res) => {
+   console.log(' reset room ' + req.params.room + ' by ' + req.header('x-user'));
+   const revealor = req.header('x-user');
    poker.reset(req.params.room)
-   updateRoom(req.params.room, false);
+   updateRoom(req.params.room, false, revealor);
    res.sendStatus(204);
 });
 
@@ -38,7 +42,7 @@ app.get('/poll/:room/init', (req, res) => {
    res.sendStatus(204);
 });
 
-function updateRoom(room, showVote) {
+function updateRoom(room, showVote, revealor) {
    const votes = poker.reveal(room);
    const result = [];
    for (const [key, value] of Object.entries(votes)) {
@@ -47,7 +51,7 @@ function updateRoom(room, showVote) {
          vote: showVote ? value : 0
       })
    }
-   longpoll.publish(`/poll/${room}`, result);
+   longpoll.publish(`/poll/${room}`, {revealor, result});
 }
 
 module.exports = app;
