@@ -77,7 +77,7 @@ describe("Long Polling", () => {
         await request(app)
             .get(("/poll/1"))
             .expect(200)
-            .expect('[{"name":"Test","vote":0},{"name":"Test2","vote":0}]');
+            .expect('{"result":[{"name":"Test","vote":0},{"name":"Test2","vote":0}]}');
     })
 
     test("GET /votes should update polling", async () => {
@@ -89,7 +89,7 @@ describe("Long Polling", () => {
         await request(app)
             .get(("/poll/1"))
             .expect(200)
-            .expect('[{"name":"Test","vote":3}]');
+            .expect('{"result":[{"name":"Test","vote":3}]}');
     })
 
     test("GET /reset should update polling", async () => {
@@ -101,6 +101,6 @@ describe("Long Polling", () => {
         await request(app)
             .get(("/poll/1"))
             .expect(200)
-            .expect('[]');
+            .expect('{"result":[]}');
     })
 });
