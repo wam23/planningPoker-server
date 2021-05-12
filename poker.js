@@ -4,7 +4,7 @@
     rooms[room] = rooms[room] || {}
     return rooms[room]
  }
- const fib = [0, 1, 2, 3, 5, 8, 13, 21];
+ const fib = [1, 2, 3, 5, 8, 13, 21, '?'];
 
 function vote(room, name, vote) {
     if (!room) {
@@ -21,7 +21,7 @@ function vote(room, name, vote) {
 }
 
 function isVoteValid(vote) {
-    return fib.includes(parseInt(vote, 10));
+    return fib.includes(vote);
 }
 
 function reveal(room) {
@@ -43,3 +43,4 @@ exports.vote = vote;
 exports.reveal = reveal;
 exports.reset = reset;
 exports.resetAll = resetAll;
+exports.fib = fib;

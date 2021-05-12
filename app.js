@@ -42,6 +42,10 @@ app.get('/poll/:room/init', (req, res) => {
    res.sendStatus(204);
 });
 
+app.get('/cardset', (req, res) => {
+   res.send(poker.fib);
+});
+
 function updateRoom(room, showVote, revealor) {
    const votes = poker.reveal(room);
    const result = [];
