@@ -10,11 +10,11 @@ beforeEach(() => {
 beforeEach(async () => {
     // reset room
     await request(app)
-        .get("/rooms/1/reset");
+        .get("/rooms/1/ateamfibonacci/reset");
 
     // prefill with 1 vote
     await request(app)
-        .post("/rooms/1/vote")
+        .post("/rooms/1/ateamfibonacci/vote")
         .send({ name: 'Test', vote: 3 });
 });
 
@@ -27,55 +27,55 @@ test("GET / should respond text", async () => {
 
 test("POST /vote should respond no content", async () => {
     await request(app)
-        .post("/rooms/1/vote")
+        .post("/rooms/1/ateamfibonacci/vote")
         .send({ name: 'Test2', vote: 5 })
         .expect(204);
 
     await request(app)
-        .get("/rooms/1/votes")
+        .get("/rooms/1/ateamfibonacci/votes")
         .expect('{"Test":3,"Test2":5}');
 });
 
 test("POST /vote invalid should respond server error", async () => {
     await request(app)
-        .post("/rooms/1/vote")
+        .post("/rooms/1/ateamfibonacci/vote")
         .send({ name: null, vote: null })
         .expect(500);
 });
 
 test("GET /votes should respond votes", async () => {
     await request(app)
-        .get("/rooms/1/votes")
+        .get("/rooms/1/ateamfibonacci/votes")
         .expect(200)
         .expect('{"Test":3}');
 });
 
 test("GET /reset should respond no content", async () => {
     await request(app)
-        .get("/rooms/1/reset")
+        .get("/rooms/1/ateamfibonacci/reset")
         .expect(204);
 
     await request(app)
-        .get("/rooms/1/votes")
+        .get("/rooms/1/ateamfibonacci/votes")
         .expect('{}');
 });
 
 describe("Long Polling", () => {
     beforeEach(async () => {
         await request(app)
-            .get("/poll/1/init")
+            .get("/poll/1/ateamfibonacci/init")
             .expect(204);
     });
 
     test("POST /vote should update polling", async () => {
         setTimeout(async () => {
             await request(app)
-                .post("/rooms/1/vote")
+                .post("/rooms/1/ateamfibonacci/vote")
                 .send({ name: 'Test2', vote: 5 })
                 .expect(204);
         }, 10);
         await request(app)
-            .get(("/poll/1"))
+            .get(("/poll/1/ateamfibonacci"))
             .expect(200)
             .expect('{"result":[{"name":"Test","vote":0},{"name":"Test2","vote":0}]}');
     })
@@ -83,11 +83,11 @@ describe("Long Polling", () => {
     test("GET /votes should update polling", async () => {
         setTimeout(async () => {
             await request(app)
-                .get("/rooms/1/votes")
+                .get("/rooms/1/ateamfibonacci/votes")
                 .expect(200);
         }, 10);
         await request(app)
-            .get(("/poll/1"))
+            .get(("/poll/1/ateamfibonacci"))
             .expect(200)
             .expect('{"result":[{"name":"Test","vote":3}]}');
     })
@@ -95,11 +95,11 @@ describe("Long Polling", () => {
     test("GET /reset should update polling", async () => {
         setTimeout(async () => {
             await request(app)
-                .get("/rooms/1/reset")
+                .get("/rooms/1/ateamfibonacci/reset")
                 .expect(204);
         }, 10);
         await request(app)
-            .get(("/poll/1"))
+            .get(("/poll/1/ateamfibonacci"))
             .expect(200)
             .expect('{"result":[]}');
     })
