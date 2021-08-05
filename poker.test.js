@@ -45,8 +45,12 @@ test('validate vote input', () => {
     expect(() => poker.vote(null, 'b', 1)).toThrow();
     expect(() => poker.vote('a', null, 1)).toThrow();
     expect(() => poker.vote('a', 'b', null)).toThrow();
-    expect(() => poker.vote('a', 'b', 'c')).toThrow();
+    expect(() => poker.vote('a', 'b', 'XXL')).toThrow();
     expect(() => poker.vote('a', 'b', -1)).toThrow();
-    expect(() => poker.vote('a', 'b', 4)).toThrow();
-    expect(() => poker.vote('a', 'b', 30)).toThrow();
+
+    poker.vote('a', 'Andy', 3);
+    poker.vote('a', 'Bony', '☕');
+    poker.vote('a', 'Carl', 'XL');
+    poker.vote('a', 'Dan', '?');
+    expect(poker.reveal('a')).toEqual({ "Andy": 3, "Bony": "☕", "Carl": "XL", "Dan": "?" });
 });

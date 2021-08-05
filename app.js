@@ -19,18 +19,16 @@ app.post('/rooms/:room/vote', (req, res) => {
 });
 
 app.get('/rooms/:room/votes', (req, res) => {
-   console.log(' reveal room ' + req.params.room + ' by ' + req.header('x-user'));
-   const revealor = req.header('x-user');
+   console.log(` reveal room ${req.params.room} by ${req.header('x-user')}`);
    const room = poker.reveal(req.params.room);
-   updateRoom(req.params.room, true, revealor);
+   updateRoom(req.params.room, true, req.header('x-user'));
    res.send(room);
 });
 
 app.get('/rooms/:room/reset', (req, res) => {
-   console.log(' reset room ' + req.params.room + ' by ' + req.header('x-user'));
-   const revealor = req.header('x-user');
+   console.log(` reset room ${req.params.room} by ${req.header('x-user')}`);
    poker.reset(req.params.room)
-   updateRoom(req.params.room, false, revealor);
+   updateRoom(req.params.room, false, req.header('x-user'));
    res.sendStatus(204);
 });
 
@@ -42,8 +40,9 @@ app.get('/poll/:room/init', (req, res) => {
    res.sendStatus(204);
 });
 
+// @deprecated
 app.get('/cardset', (req, res) => {
-   res.send(poker.fib);
+   res.send([1, 2, 3, 5, 8, 13, 21, '?']);
 });
 
 function updateRoom(room, showVote, revealor) {

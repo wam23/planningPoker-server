@@ -1,10 +1,9 @@
- // in memory persistence
- const rooms = {};
- function getRoom(room) {
+// in memory persistence
+const rooms = {};
+function getRoom(room) {
     rooms[room] = rooms[room] || {}
     return rooms[room]
- }
- const fib = [1, 2, 3, 5, 8, 13, 21, '?'];
+}
 
 function vote(room, name, vote) {
     if (!room) {
@@ -16,12 +15,13 @@ function vote(room, name, vote) {
     if (!isVoteValid(vote)) {
         throw 'Invalid vote';
     }
-    console.log(`${name} voted ${vote} in room ${room}`);
     getRoom(room)[name] = vote;
 }
 
 function isVoteValid(vote) {
-    return fib.includes(vote);
+    if (typeof vote === 'number' && vote >= 0) return true;
+    if (typeof vote === 'string' && vote.length <= 2) return true;
+    return false;
 }
 
 function reveal(room) {
@@ -43,4 +43,3 @@ exports.vote = vote;
 exports.reveal = reveal;
 exports.reset = reset;
 exports.resetAll = resetAll;
-exports.fib = fib;
