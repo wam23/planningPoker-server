@@ -60,6 +60,30 @@ test("GET /reset should respond no content", async () => {
         .expect('{}');
 });
 
+test("room is case insensitiv", async () => {
+    await request(app)
+        .get("/rooms/foo/reset");
+    await request(app)
+        .post("/rooms/foo/vote")
+        .send({ name: 'A', vote: 1 });
+    await request(app)
+        .post("/rooms/Foo/vote")
+        .send({ name: 'B', vote: 2 });
+    await request(app)
+        .post("/rooms/Foo/vote")
+        .send({ name: 'C', vote: 3 });
+
+    await request(app)
+        .get("/rooms/foo/votes")
+        .expect('{"A":1,"B":2,"C":3}');
+    await request(app)
+        .get("/rooms/FOO/votes")
+        .expect('{"A":1,"B":2,"C":3}');
+    await request(app)
+        .get("/rooms/Foo/votes")
+        .expect('{"A":1,"B":2,"C":3}');
+});
+
 describe("Long Polling", () => {
     beforeEach(async () => {
         await request(app)

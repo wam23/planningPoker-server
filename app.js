@@ -13,27 +13,27 @@ app.get('/', (req, res) => {
 });
 
 app.post('/rooms/:room/vote', (req, res) => {
-   poker.vote(req.params.room, req.body.name, req.body.vote);
-   updateRoom(req.params.room, false);
+   poker.vote(req.params.room.toLowerCase(), req.body.name, req.body.vote);
+   updateRoom(req.params.room.toLowerCase(), false);
    res.sendStatus(204);
 });
 
 app.get('/rooms/:room/votes', (req, res) => {
-   console.log(` reveal room ${req.params.room} by ${req.header('x-user')}`);
-   const room = poker.reveal(req.params.room);
-   updateRoom(req.params.room, true, req.header('x-user'));
+   console.log(` reveal room ${req.params.room.toLowerCase()} by ${req.header('x-user')}`);
+   const room = poker.reveal(req.params.room.toLowerCase());
+   updateRoom(req.params.room.toLowerCase(), true, req.header('x-user'));
    res.send(room);
 });
 
 app.get('/rooms/:room/reset', (req, res) => {
-   console.log(` reset room ${req.params.room} by ${req.header('x-user')}`);
-   poker.reset(req.params.room)
-   updateRoom(req.params.room, false, req.header('x-user'));
+   console.log(` reset room ${req.params.room.toLowerCase()} by ${req.header('x-user')}`);
+   poker.reset(req.params.room.toLowerCase())
+   updateRoom(req.params.room.toLowerCase(), false, req.header('x-user'));
    res.sendStatus(204);
 });
 
 app.get('/poll/:room/init', (req, res) => {
-   const url = `/poll/${req.params.room}`;
+   const url = `/poll/${req.params.room.toLowerCase()}`;
    if (!global.express_longpoll_emitters[url]) {
       longpoll.create(url);
    }
@@ -46,7 +46,7 @@ app.get('/cardset', (req, res) => {
 });
 
 function updateRoom(room, showVote, revealor) {
-   const votes = poker.reveal(room);
+   const votes = poker.reveal(room.toLowerCase());
    const result = [];
    for (const [key, value] of Object.entries(votes)) {
       result.push({
@@ -54,7 +54,7 @@ function updateRoom(room, showVote, revealor) {
          vote: showVote ? value : 0
       })
    }
-   longpoll.publish(`/poll/${room}`, {revealor, result});
+   longpoll.publish(`/poll/${room.toLowerCase()}`, {revealor, result});
 }
 
 module.exports = app;
