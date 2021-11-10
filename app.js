@@ -37,7 +37,8 @@ app.get('/poll/:room/init', (req, res) => {
    if (!global.express_longpoll_emitters[url]) {
       longpoll.create(url);
    }
-   res.sendStatus(204);
+   const result = votesAsArray(req.params.room.toLowerCase(), false);
+   res.send(result);
 });
 
 // @deprecated
@@ -46,6 +47,11 @@ app.get('/cardset', (req, res) => {
 });
 
 function updateRoom(room, showVote, revealor) {
+   const result = votesAsArray(room, showVote);
+   longpoll.publish(`/poll/${room.toLowerCase()}`, {revealor, result});
+}
+
+function votesAsArray(room, showVote) {
    const votes = poker.reveal(room.toLowerCase());
    const result = [];
    for (const [key, value] of Object.entries(votes)) {
@@ -54,7 +60,7 @@ function updateRoom(room, showVote, revealor) {
          vote: showVote ? value : 0
       })
    }
-   longpoll.publish(`/poll/${room.toLowerCase()}`, {revealor, result});
+   return result;
 }
 
 module.exports = app;

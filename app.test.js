@@ -84,11 +84,18 @@ test("room is case insensitiv", async () => {
         .expect('{"A":1,"B":2,"C":3}');
 });
 
+test("GET /init should respond older content", async () => {
+    await request(app)
+        .get("/poll/1/init")
+        .expect(200)
+        .expect('[{"name":"Test","vote":0}]');
+});
+
 describe("Long Polling", () => {
     beforeEach(async () => {
         await request(app)
             .get("/poll/1/init")
-            .expect(204);
+            .expect(200);
     });
 
     test("POST /vote should update polling", async () => {
