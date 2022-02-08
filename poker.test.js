@@ -35,8 +35,16 @@ test('vote for new room', () => {
     expect(Object.keys(poker.reveal('c')).length).toBe(1);
 });
 
-test('reset a room', () => {
+test('soft reset a room', () => {
     poker.reset('a');
+    expect(Object.keys(poker.reveal('a')).length).toBe(1);
+    expect(Object.keys(poker.reveal('b')).length).toBe(1);
+    expect(poker.reveal('a')).toEqual({ "Andy": -1});
+});
+
+test('hard reset a room', () => {
+    poker.reset('a'); // soft reset
+    poker.reset('a'); // hard reset
     expect(Object.keys(poker.reveal('a')).length).toBe(0);
     expect(Object.keys(poker.reveal('b')).length).toBe(1);
 });

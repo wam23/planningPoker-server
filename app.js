@@ -57,7 +57,7 @@ function votesAsArray(room, showVote) {
    for (const [key, value] of Object.entries(votes)) {
       result.push({
          name: key,
-         vote: showVote ? value : 0
+         vote: (showVote || value === -1) ? value : 0
       })
    }
    return result;

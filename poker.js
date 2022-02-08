@@ -1,8 +1,8 @@
 // in memory persistence
 const rooms = {};
 function getRoom(room) {
-    rooms[room] = rooms[room] || {}
-    return rooms[room]
+    rooms[room] = rooms[room] || {};
+    return rooms[room];
 }
 
 function vote(room, name, vote) {
@@ -29,13 +29,19 @@ function reveal(room) {
 }
 
 function reset(room) {
-    console.log(`Reset room ${room}`)
-    rooms[room] = {};
+    let roomObj = getRoom(room);
+    if (Object.values(roomObj).every(vote => vote === -1)) {
+        console.log(`Hard reset room ${room}`)
+        rooms[room] = {};
+    } else {
+        console.log(`Soft reset room ${room}, keeping names`)
+        Object.keys(roomObj).forEach(name => roomObj[name] = -1);
+    }
 }
 
 function resetAll() {
     for (let room in rooms) {
-        rooms[room] = {}
+        rooms[room] = {};
     }
 }
 

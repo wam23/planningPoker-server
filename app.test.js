@@ -8,7 +8,9 @@ beforeEach(() => {
 })
 
 beforeEach(async () => {
-    // reset room
+    // hard reset room
+    await request(app)
+        .get("/rooms/1/reset");
     await request(app)
         .get("/rooms/1/reset");
 
@@ -57,7 +59,7 @@ test("GET /reset should respond no content", async () => {
 
     await request(app)
         .get("/rooms/1/votes")
-        .expect('{}');
+        .expect('{"Test":-1}');
 });
 
 test("room is case insensitiv", async () => {
@@ -132,6 +134,6 @@ describe("Long Polling", () => {
         await request(app)
             .get(("/poll/1"))
             .expect(200)
-            .expect('{"result":[]}');
+            .expect('{"result":[{"name":"Test","vote":-1}]}');
     })
 });
