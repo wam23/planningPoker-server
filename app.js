@@ -56,7 +56,8 @@ function events(request, response, next) {
    const headers = {
       'Content-Type': 'text/event-stream',
       'Connection': 'keep-alive',
-      'Cache-Control': 'no-cache'
+      'Cache-Control': 'no-cache',
+      'Access-Control-Allow-Origin' : 'http://localhost:4200'
    };
 
    response.writeHead(200, headers);
