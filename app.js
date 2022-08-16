@@ -82,14 +82,8 @@ function events(request, response, next) {
 
 async function sendEvent(request, response, next) {
    const val = request.params.val.toLowerCase();
-   
-   const headers = {
-      'Access-Control-Allow-Origin' : '*'
-   };
-   
-   response.writeHead(200, headers);
-   
-   subscribers.forEach(subscriber => subscriber.response.write(`data: ${JSON.stringify(val)}\n\n`));
+      
+   subscribers.forEach(subscriber => subscriber.response.write(`data: ${JSON.stringify(val)}\n\n, headers: {'Access-Control-Allow-Origin' : '*'}`));
 
    response.json({success: true});
 }
