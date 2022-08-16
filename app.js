@@ -57,7 +57,9 @@ function events(request, response, next) {
       'Content-Type': 'text/event-stream',
       'Connection': 'keep-alive',
       'Cache-Control': 'no-cache',
-      'Access-Control-Allow-Origin' : '*'
+      'Access-Control-Allow-Origin' : '*',
+      'Access-Control-Allow-Headers': 'X-Accel-Buffering, Origin, X-Requested-With, Content-Type, Accept',
+      'X-Accel-Buffering': 'no'
    };
 
    response.writeHead(200, headers);
@@ -83,7 +85,7 @@ function events(request, response, next) {
 async function sendEvent(request, response, next) {
    const val = request.params.val.toLowerCase();
       
-   subscribers.forEach(subscriber => subscriber.response.write(`data: ${JSON.stringify(val)}\n\n, headers: {'Access-Control-Allow-Origin' : '*'}`));
+   subscribers.forEach(subscriber => subscriber.response.write(`data: ${JSON.stringify(val)}\n\n`));
 
    response.json({success: true});
 }
