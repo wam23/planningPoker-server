@@ -2,10 +2,7 @@ const express = require('express')
 const poker = require('./poker')
 const app = express()
 const cors = require('cors');
-const uuid = require('uuid');
 const longpoll = require('express-longpoll')(app);
-
-let subscribers = [];
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({extended: true})) // for parsing application/x-www-form-urlencoded
@@ -48,47 +45,6 @@ app.get('/poll/:room/init', (req, res) => {
 app.get('/cardset', (req, res) => {
    res.send([1, 2, 3, 5, 8, 13, 21, '?']);
 });
-
-app.get('/events', events);
-app.get('/send-event/:val', sendEvent);
-
-function events(request, response, next) {
-   const headers = {
-      'Content-Type': 'text/event-stream',
-      'Connection': 'keep-alive',
-      'Cache-Control': 'no-cache',
-      'Access-Control-Allow-Origin' : '*',
-      'Access-Control-Allow-Headers': 'X-Accel-Buffering, Origin, X-Requested-With, Content-Type, Accept',
-      'X-Accel-Buffering': 'no'
-   };
-
-   response.writeHead(200, headers);
-
-   const subscriberId = uuid.v4();
-   const data = `data: ${JSON.stringify({id: subscriberId})}\n\n`;
-
-   response.write(data);
-
-   const subscriber = {
-      id: subscriberId,
-      response
-   };
-
-   subscribers.push(subscriber);
-
-   request.on('close', () => {
-      console.log(`${subscriberId} Connection closed`);
-      subscribers = subscribers.filter(sub => sub.id !== subscriberId);
-   });
-}
-
-async function sendEvent(request, response, next) {
-   const val = request.params.val.toLowerCase();
-      
-   subscribers.forEach(subscriber => subscriber.response.write(`data: ${JSON.stringify(val)}\n\n`));
-
-   response.json({success: true});
-}
 
 function updateRoom(room, showVote, revealor) {
    const result = votesAsArray(room, showVote);
