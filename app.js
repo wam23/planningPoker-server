@@ -37,7 +37,7 @@ app.get('/poll/:room/init', (req, res) => {
    if (!global.express_longpoll_emitters[url]) {
       longpoll.create(url);
    }
-   const result = votesAsArray(req.params.room.toLowerCase(), true);
+   const result = votesAsArray(req.params.room.toLowerCase(), false);
    res.send(result);
 });
 
