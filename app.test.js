@@ -90,7 +90,7 @@ test("GET /init should respond older content", async () => {
     await request(app)
         .get("/poll/1/init")
         .expect(200)
-        .expect('[{"name":"Test","vote":0}]');
+        .expect('[{"name":"Test","vote":3}]');
 });
 
 describe("Long Polling", () => {
