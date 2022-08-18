@@ -50,7 +50,7 @@ function reset(room) {
 
 function resetAll() {
     for (let room in rooms) {
-        rooms[room] = {};
+        rooms[room] = {votes:{}, revealor:undefined};
     }
 }
 

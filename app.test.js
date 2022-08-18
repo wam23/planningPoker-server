@@ -35,7 +35,7 @@ test("POST /vote should respond no content", async () => {
 
     await request(app)
         .get("/rooms/1/votes")
-        .expect('{"Test":3,"Test2":5}');
+        .expect('{"votes":{"Test":3,"Test2":5}}');
 });
 
 test("POST /vote invalid should respond server error", async () => {
@@ -49,7 +49,7 @@ test("GET /votes should respond votes", async () => {
     await request(app)
         .get("/rooms/1/votes")
         .expect(200)
-        .expect('{"Test":3}');
+        .expect('{"votes":{"Test":3}}');
 });
 
 test("GET /reset should respond no content", async () => {
@@ -59,7 +59,7 @@ test("GET /reset should respond no content", async () => {
 
     await request(app)
         .get("/rooms/1/votes")
-        .expect('{"Test":-1}');
+        .expect('{"votes":{"Test":-1}}');
 });
 
 test("room is case insensitiv", async () => {
@@ -77,20 +77,20 @@ test("room is case insensitiv", async () => {
 
     await request(app)
         .get("/rooms/foo/votes")
-        .expect('{"A":1,"B":2,"C":3}');
+        .expect('{"votes":{"A":1,"B":2,"C":3}}');
     await request(app)
         .get("/rooms/FOO/votes")
-        .expect('{"A":1,"B":2,"C":3}');
+        .expect('{"votes":{"A":1,"B":2,"C":3}}');
     await request(app)
         .get("/rooms/Foo/votes")
-        .expect('{"A":1,"B":2,"C":3}');
+        .expect('{"votes":{"A":1,"B":2,"C":3}}');
 });
 
 test("GET /init should respond older content", async () => {
     await request(app)
         .get("/poll/1/init")
         .expect(200)
-        .expect('[{"name":"Test","vote":0}]');
+        .expect('{"votes":[{"name":"Test","vote":0}]}');
 });
 
 describe("Long Polling", () => {
