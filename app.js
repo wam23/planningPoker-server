@@ -28,7 +28,7 @@ app.get('/rooms/:room/votes', (req, res) => {
 app.get('/rooms/:room/reset', (req, res) => {
    console.log(` reset room ${req.params.room.toLowerCase()} by ${req.header('x-user')}`);
    poker.reset(req.params.room.toLowerCase())
-   updateRoom(req.params.room.toLowerCase(), false, req.header('x-user'));
+   updateRoom(req.params.room.toLowerCase(), false,undefined, req.header('x-user'));
    res.sendStatus(204);
 });
 
@@ -37,7 +37,8 @@ app.get('/poll/:room/init', (req, res) => {
    if (!global.express_longpoll_emitters[url]) {
       longpoll.create(url);
    }
-   const result = votesAsArray(req.params.room.toLowerCase(), false);
+   const revealor = poker.getRevealor(req.params.room.toLowerCase());
+   const result = {revealor: revealor, votes: votesAsArray(req.params.room.toLowerCase(), !!revealor)};
    res.send(result);
 });
 
@@ -46,13 +47,14 @@ app.get('/cardset', (req, res) => {
    res.send([1, 2, 3, 5, 8, 13, 21, '?']);
 });
 
-function updateRoom(room, showVote, revealor) {
+function updateRoom(room, showVote, revealor, resetter) {
+   poker.setRevealor(room, revealor);
    const result = votesAsArray(room, showVote);
-   longpoll.publish(`/poll/${room.toLowerCase()}`, {revealor, result});
+   longpoll.publish(`/poll/${room.toLowerCase()}`, {resetter, revealor, result});
 }
 
 function votesAsArray(room, showVote) {
-   const votes = poker.reveal(room.toLowerCase());
+   const votes = poker.reveal(room.toLowerCase()).votes;
    const result = [];
    for (const [key, value] of Object.entries(votes)) {
       result.push({
