@@ -9,16 +9,19 @@ app.use(express.urlencoded({extended: true})) // for parsing application/x-www-f
 app.use(cors())
 
 app.get('/', (req, res) => {
+   console.log('ping', req.socket.remoteAddress);
    res.send("OK");
 });
 
 app.post('/rooms/:room/vote', (req, res) => {
+   console.log('vote', req.socket.remoteAddress);
    poker.vote(req.params.room.toLowerCase(), req.body.name, req.body.vote);
    updateRoom(req.params.room.toLowerCase(), false);
    res.sendStatus(204);
 });
 
 app.get('/rooms/:room/votes', (req, res) => {
+   console.log('reveal', req.socket.remoteAddress);
    console.log(` reveal room ${req.params.room.toLowerCase()} by ${req.header('x-user')}`);
    const room = poker.reveal(req.params.room.toLowerCase());
    updateRoom(req.params.room.toLowerCase(), true, req.header('x-user'));
@@ -26,33 +29,38 @@ app.get('/rooms/:room/votes', (req, res) => {
 });
 
 app.get('/rooms/:room/reset', (req, res) => {
+   console.log('reset', req.socket.remoteAddress);
    console.log(` reset room ${req.params.room.toLowerCase()} by ${req.header('x-user')}`);
    poker.reset(req.params.room.toLowerCase())
-   updateRoom(req.params.room.toLowerCase(), false, req.header('x-user'));
+   updateRoom(req.params.room.toLowerCase(), false,undefined, req.header('x-user'));
    res.sendStatus(204);
 });
 
 app.get('/poll/:room/init', (req, res) => {
+   console.log('poll', req.socket.remoteAddress);
    const url = `/poll/${req.params.room.toLowerCase()}`;
    if (!global.express_longpoll_emitters[url]) {
       longpoll.create(url);
    }
-   const result = votesAsArray(req.params.room.toLowerCase(), false);
+   const revealor = poker.getRevealor(req.params.room.toLowerCase());
+   const result = {revealor: revealor, votes: votesAsArray(req.params.room.toLowerCase(), !!revealor)};
    res.send(result);
 });
 
 // @deprecated
 app.get('/cardset', (req, res) => {
+   console.log('cardset', req.socket.remoteAddress);
    res.send([1, 2, 3, 5, 8, 13, 21, '?']);
 });
 
-function updateRoom(room, showVote, revealor) {
+function updateRoom(room, showVote, revealor, resetter) {
+   poker.setRevealor(room, revealor);
    const result = votesAsArray(room, showVote);
-   longpoll.publish(`/poll/${room.toLowerCase()}`, {revealor, result});
+   longpoll.publish(`/poll/${room.toLowerCase()}`, {resetter, revealor, result});
 }
 
 function votesAsArray(room, showVote) {
-   const votes = poker.reveal(room.toLowerCase());
+   const votes = poker.reveal(room.toLowerCase()).votes;
    const result = [];
    for (const [key, value] of Object.entries(votes)) {
       result.push({
