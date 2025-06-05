@@ -1,12 +1,12 @@
 // in memory persistence
 const rooms = {};
+const active = {};
 const uptime = new Date().toISOString();
 
 function getRoom(room) {
     rooms[room] = rooms[room] || {
         votes: {},
-        revealor: undefined,
-        active: undefined
+        revealor: undefined
     };
     return rooms[room];
 }
@@ -20,10 +20,6 @@ function getRevealor(room) {
 }
 
 function getStats() {
-    const active = Object.keys(rooms).map(room => ({
-        room,
-        active: rooms[room].active,
-    }));
     return {
         uptime,
         active
@@ -41,7 +37,7 @@ function vote(room, name, vote) {
         throw 'Invalid vote';
     }
     getRoom(room).votes[name] = vote;
-    getRoom(room).active = new Date().toISOString();
+    active[room] = new Date().toISOString();
 }
 
 function isVoteValid(vote) {

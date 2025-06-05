@@ -33,7 +33,7 @@ test("GET /stats should respond stats", async () => {
         .expect(200);
 
     expect(response.body.uptime).toBeDefined();
-    expect(response.body.active[0].room).toBe('1');
+    expect(response.body.active['1']).toBeDefined();
 });
 
 test("POST /vote should respond no content", async () => {
