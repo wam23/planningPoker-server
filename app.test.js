@@ -27,6 +27,15 @@ test("GET / should respond text", async () => {
         .expect('OK');
 });
 
+test("GET /stats should respond stats", async () => {
+    const response = await request(app)
+        .get("/stats")
+        .expect(200);
+
+    expect(response.body.uptime).toBeDefined();
+    expect(response.body.active[0].room).toBe('1');
+});
+
 test("POST /vote should respond no content", async () => {
     await request(app)
         .post("/rooms/1/vote")

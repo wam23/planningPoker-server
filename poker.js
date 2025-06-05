@@ -1,16 +1,33 @@
 // in memory persistence
 const rooms = {};
+const uptime = new Date().toISOString();
+
 function getRoom(room) {
-    rooms[room] = rooms[room] || {votes:{}, revealor:undefined};
+    rooms[room] = rooms[room] || {
+        votes: {},
+        revealor: undefined,
+        active: undefined
+    };
     return rooms[room];
 }
 
-function setRevealor(room, revealor){
+function setRevealor(room, revealor) {
     getRoom(room).revealor = revealor;
 }
 
-function getRevealor(room){
+function getRevealor(room) {
     return getRoom(room).revealor;
+}
+
+function getStats() {
+    const active = Object.keys(rooms).map(room => ({
+        room,
+        active: rooms[room].active,
+    }));
+    return {
+        uptime,
+        active
+    };
 }
 
 function vote(room, name, vote) {
@@ -24,11 +41,16 @@ function vote(room, name, vote) {
         throw 'Invalid vote';
     }
     getRoom(room).votes[name] = vote;
+    getRoom(room).active = new Date().toISOString();
 }
 
 function isVoteValid(vote) {
-    if (typeof vote === 'number' && vote >= 0) return true;
-    if (typeof vote === 'string' && vote.length <= 2) return true;
+    if (typeof vote === 'number' && vote >= 0) {
+        return true;
+    }
+    if (typeof vote === 'string' && vote.length <= 2) {
+        return true;
+    }
     return false;
 }
 
@@ -50,7 +72,10 @@ function reset(room) {
 
 function resetAll() {
     for (let room in rooms) {
-        rooms[room] = {votes:{}, revealor:undefined};
+        rooms[room] = {
+            votes: {},
+            revealor: undefined
+        };
     }
 }
 
@@ -60,3 +85,4 @@ exports.reset = reset;
 exports.resetAll = resetAll;
 exports.setRevealor = setRevealor;
 exports.getRevealor = getRevealor;
+exports.getStats = getStats;
