@@ -3,7 +3,6 @@ const poker = require('./poker')
 const app = express()
 const cors = require('cors');
 const longpoll = require('express-longpoll')(app);
-const axios = require('axios');
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -50,29 +49,6 @@ app.get('/poll/:room/init', (req, res) => {
     res.send(result);
 });
 
-// query proxy
-app.get('/query', async (req, res) => {
-    const targetUrl = req.query.url;
-    if (targetUrl?.indexOf('jira') !== 8) {
-        return res.status(400).send('Missing url');
-    }
-
-    const authHeader = req.header('Authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).send('Missing authorization');
-    }
-
-    console.log(`Proxying request to ${targetUrl}`);
-    const response = await axios.get(targetUrl, {
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': authHeader
-        }
-    });
-
-    res.status(response.status).send(response.data);
-});
-
 // @deprecated
 app.get('/cardset', (req, res) => {
     res.send([1, 2, 3, 5, 8, 13, 21, '?']);
@@ -81,11 +57,12 @@ app.get('/cardset', (req, res) => {
 function updateRoom(room, showVote, revealor, resetter) {
     poker.setRevealor(room, revealor);
     const result = votesAsArray(room, showVote);
-    longpoll.publish(`/poll/${room.toLowerCase()}`, {
-        resetter,
-        revealor,
-        result
-    });
+    longpoll.publish(`/poll/${room.toLowerCase()}`,
+        {
+            resetter,
+            revealor,
+            result
+        });
 }
 
 function votesAsArray(room, showVote) {
